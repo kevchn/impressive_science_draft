@@ -1,0 +1,136 @@
+---
+title: "Data cleaning Experiment 3"
+output: 
+  html_document: 
+    keep_md: yes
+---
+
+```{r packages, message=FALSE}
+library(tidyverse)     # create plots with ggplot, manipulate data, etc.
+library(broom.mixed)   # convert regression models into nice tables
+library(modelsummary)  # combine multiple regression models into a single table
+library(lme4)          # model specification / estimation 
+library(lmerTest)      # provides p-values in the output
+library(ggpubr)        # stile feature of ggplot
+library(gghalves)      # do special plots in ggplot
+library(kableExtra)    # for tables
+```
+
+## Import data
+```{r import, message=FALSE}
+d <- read_csv("./data/qualtrics.csv")
+names(d)
+```
+
+```{r}
+# inspect
+head(d) # you can also use View(d)
+# delete first two rows
+d <- d %>% 
+  slice(3: nrow(.)) 
+```
+
+## Attention check
+```{r attention}
+# attention check
+# to see different answers given (i.e.levels), transform into factor
+d$attention <- as.factor(d$attention)
+# check levels to see different answer types
+levels(d$attention) 
+
+table(d$attention)
+```
+
+There is no failed attention check. 
+
+```{r}
+# filter to only valid attention check responses
+d <- d %>% filter(str_detect(attention, regex("atten", ignore_case = TRUE)))
+```
+
+## Re-shape data
+
+```{r}
+# check all names and their order
+names(d)
+```
+
+
+```{r}
+# clean and re-shape
+d <- d %>% 
+  # add an easy to read participant identifier
+  mutate(id = 1:nrow(.)) %>% 
+  # rename variable indicating which question has been used
+  rename(treatment = condition) %>% 
+  # bring to long format
+  pivot_longer(cols = c(starts_with("archeo"), starts_with("entom")), 
+               names_to = "condition", values_to = "score") %>% 
+  # separate conditions into CONVERGENCE_OUTCOME_STIMULUS
+  separate_wider_delim(condition, "_", names = c("discipline", "outcome")
+                       ) %>%
+  # necessary because of the way we labeled
+  drop_na(score) %>% 
+  pivot_wider(names_from = outcome, values_from = score) %>% 
+  # create better variable names
+  rename(competence = comp, 
+         impressed = imp) %>% 
+  # all variables are coded as `character` - make key variables numeric
+  mutate(across(c(learn, competence, impressed, trust, starts_with("knowledge")), as.numeric),
+         # recode knowledge questions as TRUE and FALSE, such that 1 corresponds to TRUE and 0 to FALSE
+         across(starts_with("knowledge"), ~ifelse(.x == 1, TRUE, FALSE))
+         )
+```
+
+Calculate an average knowledge score and number of correctly answered questions per participant. 
+
+```{r}
+d <- d %>% 
+  # add average knowledge score
+  rowwise() %>% 
+  mutate(
+    n_correct = sum(c_across(starts_with("knowledge")),na.rm = TRUE),
+    knowledge_avg = mean(c_across(starts_with("knowledge")),na.rm = TRUE),
+         ) %>% 
+  ungroup() # Turn off rowwise()
+```
+
+## Remove distraction task variable
+
+```{r}
+d <- d %>% 
+  select(-c(starts_with("text"), contains("intention"), contains("benefit")))
+```
+
+## Add scaled variables
+
+```{r}
+# Scale all variables except id and add a suffix "std" to the new variables
+d <- d %>%
+  mutate(across(c(n_correct, trust, impressed, competence), 
+                ~as.numeric(scale(.x)),
+                .names = "{.col}_std"))
+```
+
+## Make long format version
+
+```{r}
+# Convert to long format
+data_long <- d %>%
+  pivot_longer(cols = c(n_correct_std, trust_std, impressed_std, competence_std), 
+               names_to = "outcome", values_to = "value") %>% 
+# add a numeric version for outcome
+  mutate(outcome_numeric = ifelse(outcome == "n_correct_std", 1, 0))
+
+```
+
+
+## Export data
+
+```{r}
+# wide format
+write_csv(d, "data/cleaned_wide.csv")
+
+# long format
+write_csv(data_long, "data/cleaned_long.csv")
+```

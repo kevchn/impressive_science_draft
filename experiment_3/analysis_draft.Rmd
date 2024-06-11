@@ -1,0 +1,134 @@
+---
+title: "Pre-registration Experiment 2"
+output:
+  bookdown::pdf_document2: default
+  bookdown::word_document2: default
+  bookdown::html_document2:
+      keep_md: yes
+always_allow_html: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r packages, message=FALSE, echo=FALSE, include=FALSE}
+library(tidyverse)     # create plots with ggplot, manipulate data, etc.
+library(broom.mixed)   # convert regression models into nice tables
+library(modelsummary)  # combine multiple regression models into a single table
+library(lme4)          # model specification / estimation 
+library(lmerTest)      # provides p-values in the output
+library(ggpubr)        # stile feature of ggplot
+library(gghalves)      # do special plots in ggplot
+library(kableExtra)    # for tables
+library("grid")        # for image plots   
+library("gridExtra")   # for image plots
+library("png")         # for image plots
+library(stargazer)
+```
+
+```{r, include=FALSE, message=FALSE}
+data <- read_csv("data/cleaned_wide.csv")
+```
+
+```{r, include=FALSE, message=FALSE}
+data_long <- read_csv("data/cleaned_long.csv")
+```
+
+We filter the outcome variable to include only the pair we care about (depending on the hypothesis). The example below is for trust as outcome.
+
+```{r}
+data_H1_trust <- data_long %>%
+  filter(outcome %in% c("n_correct_std", "trust_std"))
+
+data_H1_impressed <- data_long %>%
+  filter(outcome %in% c("n_correct_std", "impressed_std"))
+
+data_H1_competence <- data_long %>%
+  filter(outcome %in% c("n_correct_std", "competence_std"))
+```
+
+We then run a mixed model with random intercepts on the data, using the lmer function.
+
+```{r, warning=FALSE, message=FALSE}
+# mixed model
+model_H1_trust <- lmer(value ~ treatment * outcome_numeric + (1 | id), data = data_H1_trust)
+
+model_H1_impressed <- lmer(value ~ treatment * outcome_numeric + (1 | id), data = data_H1_impressed)
+
+model_H1_competence <- lmer(value ~ treatment * outcome_numeric + (1 | id), data = data_H1_competence)
+```
+
+```{r}
+ggplot(data_H1_trust, aes(x = treatment, y = value)) +
+  stat_summary(geom = "pointrange", size = 1, color = "red",
+               fun.data = "mean_se", fun.args = list(mult = 1.96)) +
+  facet_wrap(vars(outcome_numeric), labeller = labeller(outcome_numeric = c("0"="trust","1"="knowledge")))
+
+ggplot(data_H1_impressed, aes(x = treatment, y = value)) +
+  stat_summary(geom = "pointrange", size = 1, color = "red",
+               fun.data = "mean_se", fun.args = list(mult = 1.96)) +
+  facet_wrap(vars(outcome_numeric), labeller = labeller(outcome_numeric = c("0"="impressed","1"="knowledge")))
+
+ggplot(data_H1_competence, aes(x = treatment, y = value)) +
+  stat_summary(geom = "pointrange", size = 1, color = "red",
+               fun.data = "mean_se", fun.args = list(mult = 1.96)) +
+  facet_wrap(vars(outcome_numeric), labeller = labeller(outcome_numeric = c("0"="competence","1"="knowledge")))
+```
+
+
+```{r}
+
+data_H1_trust <- data_H1_trust %>% 
+  # Make these categories instead of 0/1 numbers so they look nicer in the plot
+  group_by(treatment,outcome_numeric) |>
+  summarize(mean_value = mean(value),
+            se_value = sd(value) / sqrt(n()),
+            upper = mean_value + (1.96 * se_value),
+            lower = mean_value + (-1.96 * se_value)) %>% 
+  #pour utiliser color=outcome_numeric en cas discret
+ mutate(outcome_numeric = recode(as.character(outcome_numeric), "0" = "trust", "1" = "knowledge"))
+
+ggplot(data_H1_trust, aes(x = treatment, y = mean_value, color = outcome_numeric)) +
+  geom_pointrange(aes(ymin = lower, ymax = 0.2), size = 1) +
+  geom_line(aes(group = outcome_numeric))
+
+
+
+data_H1_impressed <- data_H1_impressed %>% 
+  # Make these categories instead of 0/1 numbers so they look nicer in the plot
+  group_by(treatment,outcome_numeric) |>
+  summarize(mean_value = mean(value),
+            se_value = sd(value) / sqrt(n()),
+            upper = mean_value + (1.96 * se_value),
+            lower = mean_value + (-1.96 * se_value)) %>% 
+  #pour utiliser color=outcome_numeric en cas discret
+ mutate(outcome_numeric = recode(as.character(outcome_numeric), "0" = "impressed", "1" = "knowledge"))
+
+ggplot(data_H1_impressed, aes(x = treatment, y = mean_value, color = outcome_numeric)) +
+  geom_pointrange(aes(ymin = lower, ymax = 0.2), size = 1) +
+  geom_line(aes(group = outcome_numeric))
+
+
+
+data_H1_competence <- data_H1_competence %>% 
+  # Make these categories instead of 0/1 numbers so they look nicer in the plot
+  group_by(treatment,outcome_numeric) |>
+  summarize(mean_value = mean(value),
+            se_value = sd(value) / sqrt(n()),
+            upper = mean_value + (1.96 * se_value),
+            lower = mean_value + (-1.96 * se_value)) %>% 
+  #pour utiliser color=outcome_numeric en cas discret
+ mutate(outcome_numeric = recode(as.character(outcome_numeric), "0" = "competence", "1" = "knowledge"))
+
+ggplot(data_H1_competence, aes(x = treatment, y = mean_value, color = outcome_numeric)) +
+  geom_pointrange(aes(ymin = lower, ymax = 0.2), size = 1) +
+  geom_line(aes(group = outcome_numeric))
+  
+
+```
+
+
+
+
+

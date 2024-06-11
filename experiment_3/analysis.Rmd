@@ -1,0 +1,144 @@
+---
+title: "Analysis Experiment 3"
+output:
+  bookdown::pdf_document2: default
+  bookdown::word_document2: default
+  bookdown::html_document2:
+      keep_md: yes
+always_allow_html: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE)
+```
+
+```{r packages, message=FALSE, echo=FALSE, include=FALSE}
+library(tidyverse)     # create plots with ggplot, manipulate data, etc.
+library(broom.mixed)   # convert regression models into nice tables
+library(modelsummary)  # combine multiple regression models into a single table
+library(lme4)          # model specification / estimation 
+library(lmerTest)      # provides p-values in the output
+library(ggpubr)        # stile feature of ggplot
+library(gghalves)      # do special plots in ggplot
+library(kableExtra)    # for tables
+library("grid")        # for image plots   
+library("gridExtra")   # for image plots
+library("png")         # for image plots
+library(stargazer)
+```
+
+```{r, include=FALSE, message=FALSE}
+data_wide <- read_csv("data/cleaned_wide.csv")
+
+data_long <- read_csv("data/cleaned_long.csv")
+```
+
+# Descriptives
+
+## Knowledge
+
+```{r, echo=FALSE, message=FALSE, fig.show='hold'}
+# by discipline
+ggplot(data_wide, aes(x = n_correct, fill = treatment)) + 
+  geom_bar(alpha = 0.5, position = "dodge") + 
+  scale_fill_viridis_d(option = "magma", begin = 0.5, end = 0.8) + 
+  facet_wrap(~treatment)
+```
+
+```{r, results = 'asis'}
+# no treatment effect on knowledge
+treatment_knowledge <- lm(n_correct ~ treatment, data_wide)
+
+# summary(treatment_knowledge)
+
+# Output the regression results using stargazer for LaTeX
+stargazer(treatment_knowledge, type = "latex", title = "Regression Results", 
+          dep.var.labels = "Number of Correct Answers", 
+          covariate.labels = c("Treatment (treatment vs control)"), 
+          single.row = TRUE, style = "qje", header = FALSE)
+```
+
+## Trust
+
+```{r, echo=FALSE, message=FALSE, fig.show='hold'}
+# by discipline
+ggplot(data_wide, aes(x = trust, fill = treatment)) + 
+  geom_bar(alpha = 0.5, position = "dodge") + 
+  scale_fill_viridis_d(option = "rocket" , begin = 0.2, end = 0.9) + 
+  facet_wrap(~treatment)
+```
+
+```{r, results = 'asis'}
+# no treatment effect on knowledge
+treatment_knowledge <- lm(trust ~ treatment, data_wide)
+
+# summary(treatment_knowledge)
+
+# Output the regression results using stargazer for LaTeX
+stargazer(treatment_knowledge, type = "latex", title = "Regression Results", 
+          dep.var.labels = "Trust", 
+          covariate.labels = c("Treatment (treatment vs control)"), 
+          single.row = TRUE, style = "qje", header = FALSE)
+```
+
+# Models
+
+```{r, echo=FALSE, message=FALSE, fig.show='hold'}
+# by discipline
+ggplot(data_long, aes(x=outcome, y=value, fill = treatment)) +
+  geom_half_violin(position = position_nudge(x = -.2),
+                   adjust=2, alpha = .4,
+                   side = "l") +
+  stat_summary(fun = "mean", geom = "point", size = 2, shape = 21) +
+  stat_summary(fun = "mean", geom = "line", size = 1, linetype = "dashed") +
+  stat_summary(fun.data = "mean_se", geom = "errorbar", width = .2) +
+  # Add nice labels
+  labs(x = "Convergence", y = "Accuracy", fill = NULL) +
+  scale_fill_manual(values = c("#E69F00", "#56B4E9")) +
+  #plot_theme + 
+  theme(axis.text.x = element_text(angle = 20, hjust = 1))
+```
+
+```{r}
+# Function to filter data and run mixed model for a given outcome and comparison variable
+run_mixed_model <- function(data, outcome) {
+  # Filter data to include only the pair we care about
+  data_filtered <- data %>% 
+    filter(outcome == "n_correct_std" | outcome == {{outcome}})
+
+  # Run the mixed model with random intercepts
+  model <- lmer(value ~ treatment * outcome_numeric + (1 | id), data = data_filtered)
+  
+  return(model)
+}
+```
+
+```{r, echo=FALSE}
+model_competence <- run_mixed_model(data_long, outcome = "competence_std")
+model_trust <- run_mixed_model(data_long, outcome = "trust_std")
+model_impressed <- run_mixed_model(data_long, outcome = "impressed_std")
+
+modelsummary(list(
+                  "Competence" = model_competence,
+                  "Trust" = model_trust,
+                  "Impressiveness" = model_impressed
+                  ), 
+             stars = TRUE)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

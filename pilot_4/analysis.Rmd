@@ -1,0 +1,62 @@
+---
+title: "Analysis Pilot 4"
+output: 
+  html_document: 
+    keep_md: yes
+---
+
+```{r packages, message=FALSE}
+library(tidyverse)     # create plots with ggplot, manipulate data, etc.
+library(broom.mixed)   # convert regression models into nice tables
+library(modelsummary)  # combine multiple regression models into a single table
+library(lme4)          # model specification / estimation 
+library(lmerTest)      # provides p-values in the output
+library(ggpubr)        # stile feature of ggplot
+library(gghalves)      # do special plots in ggplot
+library(kableExtra)    # for tables
+```
+
+## Import data
+```{r import, message=FALSE}
+d <- read_csv("./data/cleaned.csv")
+```
+
+```{r}
+# overall
+d %>% 
+  group_by(impressiveness) %>% 
+  summarise(across(c(impressed, learn, know, competence, trust, cons), 
+                   list(mean = ~mean(., na.rm=TRUE)), 
+                   .names = "{col}_{fn}")) %>% 
+  mutate_if(is.numeric, ~round(.x, digits = 2)) %>% 
+  kable() %>% 
+  kable_classic(full_width = F)
+```
+
+```{r}
+# by discipline
+d %>% 
+  group_by(discipline, impressiveness) %>% 
+  summarise(across(c(impressed, learn, know, competence, trust, cons), 
+                   list(mean = ~mean(., na.rm=TRUE)), 
+                   .names = "{col}_{fn}")) %>%
+  mutate_if(is.numeric, ~round(.x, digits = 2)) %>% 
+  kable() %>% 
+  kable_classic(full_width = F)
+```
+
+```{r}
+# between versions
+d %>% 
+  group_by(impressiveness, version) %>% 
+summarise(across(c(impressed, learn, know, competence, trust, cons), 
+                   list(mean = ~mean(., na.rm=TRUE)), 
+                   .names = "{col}_{fn}")) %>%
+  mutate_if(is.numeric, ~round(.x, digits = 2)) %>% 
+  kable() %>% 
+  kable_classic(full_width = F)
+```
+
+
+
+

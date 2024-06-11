@@ -1,0 +1,218 @@
+---
+title: "Pre-registration Experiment 3"
+output:
+  bookdown::pdf_document2:
+    toc: false
+  bookdown::word_document2: default
+  bookdown::html_document2:
+    keep_md: yes
+    toc: false  # Remove table of contents from HTML output
+always_allow_html: true
+---
+
+```{r packages, message=FALSE, echo=FALSE, include=FALSE}
+library(tidyverse)     # create plots with ggplot, manipulate data, etc.
+library(broom.mixed)   # convert regression models into nice tables
+library(modelsummary)  # combine multiple regression models into a single table
+library(lme4)          # model specification / estimation 
+library(lmerTest)      # provides p-values in the output
+library(ggpubr)        # stile feature of ggplot
+library(gghalves)      # do special plots in ggplot
+library(kableExtra)    # for tables
+```
+
+# Introduction
+
+We want to test the trust-by-impression account by comparing how persistent people’s impressions of scientists’ trustworthiness are compared to their knowledge of science content. We therefore compare trust-by-impression to the deficit model. 
+
+# Data collection
+
+We have run a pilot study corresponding to the design described here. This pilot serves as a manipulation check - do people’s impressions of scientists’ trustworthiness are indeed more persistent than their knowledge of science content ? - and to inform our simulations.
+
+# Procedure 
+
+After providing their consent to participate in the study, participants will pass an attention check : 
+
+Imagine you are playing video games with a friend and at some point your friend says: “I don’t want to play this game anymore! To make sure that you read the instructions, please write the three following words”I pay attention” in the box below. I really dislike this game, it’s the most overrated game ever. Do you agree with your friend? Participants will then read the following instructions:
+
+Participants will then read the following instructions:
+
+You’re going to read a text about scientific discoveries, either about archaeology (the study of human activity through the recovery and analysis of material culture) or about entomology (the study of insects). We ask you then to answer a few questions about them.
+
+# Design
+
+All participants read a vignette about scientific findings in one of the two disciplines (archaeology or entomology). Texts are manipulated to be both impressive and to provide enough knowledge to be analyzed. 
+
+```{r stimuli, echo=FALSE}
+# Create a matrix of image file paths as Markdown-formatted strings
+table <- data.frame(
+  archaeology = "Archaeologists, scientists who study human history and prehistory, are able to tell, from their bones, whether someone was male or female, how old they were, and whether they suffered from a range of diseases. Archaeologists can now tell at what age someone, dead for tens of thousands of years, stopped drinking their mother’s milk, from the composition of their teeth.
+
+Archaeologists learn about the language that our ancestors or cousins might have had. For instance, the nerve that is used to control breathing is larger in humans than in apes, plausibly because we need more fine-grained control of our breathing in order to speak. As a result, the canal containing that nerve is larger in humans than in apes – and it is also enlarged in Neanderthals.
+
+Archaeologists can also tell, from an analysis of the tools they made, that most Neanderthals were right-handed. It’s thought that handedness is related to the evolution of language, another piece of evidence suggesting that Neanderthals likely possessed a form of language.
+",
+  Entomology = "Entomologists are the scientists who study insects. Some of them have specialized in understanding how insects perceive the world around them, and they have uncovered remarkable abilities. 
+
+Entomologists interested in how flies’ visual perception works have used special displays to present images for much less than the blink of an eye, electrodes to record how individual cells in the flies’ brain react, and ultra-precise electron microscopy to examine their eyes. Thanks to these techniques, they have shown that some flies can perceive images that are displayed for just three milliseconds (a thousandth of a second) – about ten times shorter than a single movie frame (of which there are 24 per second). 
+
+Entomologists who study the hair of crickets have shown that these microscopic hairs, which can be found on antenna-like organs attached to the crickets’ rear, are maybe the most sensitive organs in the animal kingdom. The researchers used extremely precise techniques to measure how the hair reacts to stimuli, such as laser-Doppler velocimetry, a technique capable of detecting the most minute of movements. They were able to show that the hair could react to changes in the motion of the air that had less energy than one particle of light, a single photon.
+"
+)
+
+# Use kable() to create the table and print it as Markdown
+kableExtra::kable(table, 
+                  col.names = c( "Archaeology", "Entomology"),
+                  caption = "Stimuli",
+                  align = "l", 
+                  booktabs = T,
+                  longtable = TRUE) %>%
+  kable_paper(full_width = FALSE) %>%
+  column_spec(1, width = "20em") %>%
+  column_spec(2, width = "20em") 
+```
+
+They answer four decoy questions that are irrelevant to our hypotheses. 
+
+We asked participants how clear was the text [1 - Not clear at all, 2 - Not very clear, 3 - Neither clear nor not clear, 4 - Quite clear, 5 - Very clear] and if the text presented any new or surprising information to them [1 - None at all, 2 - Very little, 3 - Moderately, 4 - Quite a bit, 5 - A significant amount]. Then we asked them if they think that archaeologists/entomologists have more knowledge than what they did before [1 - Strongly disagree, 2 - Disagree, 3 - Neither agree nor disagree, 4 - Agree, 5 - Strongly agree] and how much they felt they have learned about human history/insects by reading the text [1 - Nothing, 2 - A bit, 3 - Some, 4 - Quite a bit, 5 - A lot].
+
+The control group then immediately proceeds to fill out two question blocks (in randomized order): block 1 consists of knowledge questions about the content of the vignette that they read; block 2 contains questions on how trustworthy and competent they find scientists of the respective discipline, and impressive their findings are. 
+
+The treatment group does the same thing, but first engages in a distraction task (give details + time). 
+
+The distraction task consists of …
+
+# Outcomes
+
+We assess the following outcomes:
+
+```{r echo=FALSE}
+
+block <- data.frame(
+  Archaeology = c("According to the text, what can archaeologists determine from examining bones? 
+a) Gender, age, and past diseases 
+b) Gender, age, and handedness
+c) Gender and age
+d) Gender, age, past diseases, and handedness
+(correct answer: a)
+",
+"",
+"According to the text, how do archaeologists determine at what age someone stopped drinking their mother’s milk?
+a) By analyzing their bones 
+b) By examining their hair 
+c) By studying their teeth 
+d) By observing their burial rituals
+(correct answer: c)
+",
+"",
+"The text mentions nerves that are particularly enlarged in humans compared to apes, which are they? 
+a) The nerves that control fine hand movements
+b) The nerves that control breathing
+c) The nerves that balance for bipedal motion
+d) The nerves that control the digestive system
+(correct answer: b)
+",
+"",
+"Why is the canal containing a nerve going from the brain to the thorax enlarged in Neanderthals? 
+a) Because Neanderthals had a different diet
+b) Because Neanderthals engaged in increased physical activity 
+c) Because Neanderthals were left-handed 
+d) Because Neanderthals were able to speak
+
+(correct answer: d)
+",
+"",
+"According to the text, what evidence suggests that most Neanderthals were right-handed? 
+a) Analysis of their bones 
+b) Analysis of their tools 
+c) Examination of their teeth 
+d) Observation of their cave paintings
+(correct answer: b)
+"),
+  Entomology = c("Which techniques have entomologists used to study flies' visual perception?
+
+A) Sonar imaging
+B) Electron microscopy 
+C) X-ray diffraction 
+D) Mass spectrometry
+
+(correct answer: b)
+
+",
+"",
+"What is the order or magnitude of the shorter displays flies can perceive?
+
+A) Picoseconds
+B) Nanoseconds
+C) Microseconds
+D) Milliseconds
+
+(correct answer: d)
+",
+"",
+"Where are the sensitive hairs found on crickets located?
+
+   A) Legs  
+   B) Wings  
+   C) Rear  
+   D) Head  
+
+(correct answer: c)
+",
+"",
+"What technique did entomologists use to study the sensitivity of cricket hairs?
+
+   A) Mass spectrometry  
+   B) Electron microscopy  
+   C) Laser-Doppler velocimetry  
+   D) Sonar imaging  
+
+(correct answer: c)
+",
+"",
+"According to the passage, how sensitive are the cricket hairs to air motion changes?
+
+   A) They react to changes equivalent to the energy of a single photon.  
+   B) They react to changes equivalent to the energy of a single atom.  
+   C) They react to changes equivalent to the energy of a single grain of sand.
+   D) They react to changes equivalent to the energy of a single breath.  
+(correct answer: a)
+")
+) 
+
+# Use kable() to create the table and print it as Markdown
+kableExtra::kable(block, 
+                  col.names = c("Archaeology", "Entomology"),
+                  caption = "Questions",
+                  align = "l", 
+                  booktabs = T,
+                  longtable = TRUE) %>%
+  kable_paper(full_width = FALSE) %>%
+  column_spec(1, width = "20em", extra_css = "padding: 20px;", border_right = TRUE) %>%
+  column_spec(2, width = "20em", extra_css = "padding: 20px;") 
+```
+
+We asked participants how impressive they found the findings of the scientists (“How impressive do you think the findings of the archaeologists/entomologists described in the text are?” [1 - Not impressive at all, 2 - Not very impressive, 3 - Neither impressive nor not impressive, 4 - Quite impressive, 5 - Very impressive]). We also asked them about whether reading the text changed their impression of the competence of the scientists of the respective discipline ("How competent do you think archaeologists/entomologists are?" [1 - Not competent at all, 2 - Not very competent, 3 - Neither competent nor not competent, 4 - Quite competent, 5 - Very competent]) and their trust in the respective discipline ("How much would you trust the discipline of archaeologists/entomologists ?" [1 - Not trust them at all, 2 - Not trust them much, 3 - Neither trust them or not trust them, 4 - Trust them quite a bit, 5 - Trust them a lot]). 
+
+# Manipulation check, hypotheses, research questions
+
+We expect people to forget quickly (during the time of a short distraction task) about precise content, but impressions they gain about scientists’ trustworthiness stick. In other words, we predict that the difference in knowledge performance between treatment and control group is larger (more negative) than the difference in trust (impressiveness/competence). 
+
+H1: The difference in knowledge performance between treatment and control group is larger (more negative) than the difference in …
+
+H1a: trust.
+
+H1b: impressiveness.
+
+H1c: competence.
+
+We are going to test this with a model XX
+
+
+Research questions:
+
+# Exclusions
+
+We will exclude participants failing the attention check, i.e. participants not answering the question or writing anything that does resemble “I pay attention”.
+
+# Power analysis

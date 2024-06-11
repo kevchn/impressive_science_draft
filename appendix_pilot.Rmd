@@ -1,0 +1,34 @@
+# Preceding pilot {#pilot}
+
+Avant chacune de nos expérimentations, nous avons effectué des "pilots" sur un nombre de participants réduit pour tester certains paramètres qui pourraient être pertinent de les intégrer dans nos expérimentations.
+
+Nous avons effectué au total 5 pilots.
+
+## Pilot 1 
+
+
+Le pilot 1 précède l'expérimentation 1 et reprend exactement la même procédure et "materials" que ce dernier, à la seule différence qu'il s'agissait d'un texte sur la myrmécologie au lieu d'entomologie -- l'autre texte portait toujours sur l'archéologie --, et nous avons ajouté en plus des questions dont les réponses étaient sans "labels". Ainsi, certains participants avaient de manière aléatoire soit des réponses du type  [1 - Not very impressive, 2 - A bit impressive, 3 - Quite impressive, 4 - Very impressive, 5 - Extremely impressive], soit [1 , 2 , 3 , 4 , 5]. Nous voulions ainsi nous assurer que pour certaines questions, les noms des réponses ne soient pas extrême au point d'influencer les participants en y répondant. Cependant, comme nous avons effectué le pilot sur quarante participants, nous nous sommes dit que cette influence ne serait pas visible sur les résultats. En fin de compte, nous n'avons pas étudié ce paramètre. 
+
+## Pilot 2 
+
+Dans le pilot 1, nous avons supprimer l'idée de proposer deux textes pour garder uniquement celui qui porte sur l'archéologie. Nous voulions vérifier s'il n'était pas plus pertinent que les participants passent seulement sur une seule discipline, dont le texte est soit basic soit impressionnante, et de calculer nos résultats entre les deux conditions uniquement entre des participants différents. Nous avions pensé que les réponses sur le deuxième texte d'un participant pourrait être influencé après avoir répondu à un premier questionnaire.
+
+## Pilot 3 
+
+In the control condition, the goal is to give people information that can be impressive, but that fits with that they already would have guessed entomologists (for instance) knew, and so which shouldn't really affect their perception. (I'm not saying the participants knew, or even had been explicitly taught everything that they read, only that it's 'built in' their preconceptions about the scientists -- e.g. people might not have ever learnt how many body parts insects have, but they would expect entomologists to know that, so it's not impressive when they learn how many body parts insects have, compared to their expectations).
+
+By contrast, in the experimental condition, we should show people that the scientists know more than they would have guessed. (E.g. people might not know that entomologists can measure single neurons in flies' brains, etc.).
+
+So the only relevant question is whether participants, in the experimental condition think the scientists know more than they thought before, and whether that correlates with an increase in trust (that's the question we're interested in). So we might just need the difference in competence and difference in trust questions.
+
+(For the whole theoretical framework to make sense, we could also check that participants assume the knowledge is mostly consensual in both conditions, as it should be less impressive if it's not consensual.)
+
+## Pilot 4 
+
+Précède l'expérimentation 1, même format que pilot 3 : un texte sur l'archéologie et l'autre sur l'entomologie. Nous avons ajouté une question sur le consensus : To which extent do you think the findings from the short text you just read reflect a minority or a majority opinion among archeologists/entomologists ?
+
+Aussi, certains participants n'avaient que 2 questions à répondre au lieu de 8 : celle qui porte sur la confiance -- Having read this text, would you agree/disagree that you trust the discipline of archeology/entomology more than you did before?-- , et celle sur le consensus.
+
+## Pilot 5 
+
+Nous avons ajouté des questions "decoy" 

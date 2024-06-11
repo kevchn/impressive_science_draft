@@ -1,0 +1,51 @@
+# Experiment 1 {#exp1}
+
+## Materials
+
+\FloatBarrier
+
+## Descriptives
+
+```{r exp1-descriptives}
+# by discipline
+exp1 %>% 
+  group_by(discipline, impressiveness) %>% 
+  summarise(across(c(impressed, learn, competence, trust, consensus), 
+                   list(mean = ~mean(., na.rm=TRUE)), 
+                   .names = "{col}_{fn}")) %>%
+  mutate_if(is.numeric, ~round(.x, digits = 2)) %>% 
+  kable(format = "latex", booktabs = TRUE, caption = "Descriptives") %>%
+  kable_styling(full_width = FALSE) %>%
+  # make smaller to fit
+  kable_styling(latex_options = "scale_down")
+```
+
+## Regression tables
+
+The results of the models from the hypotheses can be found in table \@ref(tab:exp1-hypotheses-table).
+
+```{r exp1-hypotheses-table}
+modelsummary(list(
+                  "H1a (Competence)" = H1a_model,
+                  "H1b (Competence pooled)" = H1b_model,
+                  "H2a (Trust)" = H2a_model,
+                  "H2b (Trust pooled)" = H2b_model
+                  ), 
+             stars = TRUE) %>%
+  # make smaller to fit
+  kable_styling(latex_options = "scale_down")
+```
+
+The results of the model from RQ1 and of the models from RQ2 (interaction between impressiveness and consensus on competence/trust) can be found in table \@ref(tab:exp1-consensus-table).
+
+```{r exp1-consensus-table}
+modelsummary(list("RQ 1" = RQ1_model,
+                  "H1a x Consensus" = RQ2_H1a_model,
+                  "H1b x Consensus" = RQ2_H1b_model,
+                  "H2a x Consensus" = RQ2_H2a_model,
+                  "H2b x Consensus" = RQ2_H2b_model
+), 
+stars = TRUE) %>%
+  # make smaller to fit
+  kable_styling(latex_options = "scale_down")
+```

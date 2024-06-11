@@ -1,0 +1,98 @@
+# Experiment 2 {#exp2}
+
+## Materials
+
+\FloatBarrier
+
+## Descriptives
+
+```{r exp2-descriptives}
+# by discipline
+exp2 %>% 
+  group_by(discipline, impressiveness) %>% 
+  summarise(across(c(impressed, learn, competence, trust, consensus), 
+                   list(mean = ~mean(., na.rm=TRUE)), 
+                   .names = "{col}_{fn}")) %>%
+  mutate_if(is.numeric, ~round(.x, digits = 2)) %>% 
+  kable(format = "latex", booktabs = TRUE, caption = "Descriptives") %>%
+  kable_styling(full_width = FALSE) %>%
+  # make smaller to fit
+  kable_styling(latex_options = "scale_down")
+```
+
+## Regression tables
+
+The results of the models from the hypotheses can be found in table \@ref(tab:exp2-hypotheses-table).
+
+```{r exp2-hypotheses-table}
+modelsummary(list(
+                  "H1a (Competence)" = H1a_model,
+                  "H1b (Competence pooled)" = H1b_model,
+                  "H2a (Trust)" = H2a_model,
+                  "H2b (Trust pooled)" = H2b_model
+                  ), 
+             stars = TRUE) %>%
+  # make smaller to fit
+  kable_styling(latex_options = "scale_down")
+```
+
+The results of the model from RQ1 and of the models from RQ2 (interaction between impressiveness and consensus on competence/trust) can be found in table \@ref(tab:exp2-consensus-table).
+
+```{r exp2-consensus-table}
+modelsummary(list("RQ 1" = RQ1_model,
+                  "H1a x Consensus" = RQ2_H1a_model,
+                  "H1b x Consensus" = RQ2_H1b_model,
+                  "H2a x Consensus" = RQ2_H2a_model,
+                  "H2b x Consensus" = RQ2_H2b_model
+), 
+stars = TRUE) %>%
+  # make smaller to fit
+  kable_styling(latex_options = "scale_down")
+```
+
+## Stimuli
+
+```{r stimuli}
+# Create a matrix of image file paths as Markdown-formatted strings
+table <- data.frame(impressiveness = c("basic", 
+                                       "impressive"),
+                    Experiment_1 = c("Archaeology is the science that studies human history and prehistory based on the analysis of objects from the past such as human bones, engravings, constructions, and various objects, from nails to bits of pots. This task requires a great deal of carefulness, because objects from the past need to often be dug out from the ground and cleaned, without destroying them in the process. 
+
+Archeologists have been able to shed light on human history in all continents, from ancient Egypt to the Incas in Peru or the Khmers in Cambodia. 
+
+Archaeologists have made some startling discoveries, such as the amazing animal paintings in the Lascaux caves, which have been shown to be at least 30000 years old. On that basis, archeologists speculate on the artistic and religious lives of our ancestors. 
+
+Archeologists have also been able to find remains of our more distant ancestors, showing that our species is just one among several that appeared and then went extinct, such as Neanderthals, Homo erectus, or Homo habilis. 
+
+Archaeology relies on scientific methods of analysis such as carbon dating, which enables us to date objects, based on the type of carbon atoms they contain.", 
+"Archeologists, scientists who study human history and prehistory, are able to tell, from their bones, whether someone was male or female, how old they were, and whether they suffered from a wide range of diseases. Archeologists can now even tell at what age someone, dead for tens of thousands of years, stopped drinking their mother’s milk, from the composition of their teeth. 
+
+Looking for patterns, archeologists can also understand how far our ancestors traveled, or how often they fought each other.
+
+Archeologists can learn about the language that our ancestors or cousins might have had. For instance, the nerve that is used to control breathing is larger in humans than in apes, plausibly because we need more fine-grained control of our breathing in order to speak. As a result, the canal containing that nerve is larger in humans than in apes – and it is also enlarged in Neanderthals. 
+
+We can also tell, from an analysis of the tools they made, that, like modern humans, most Neanderthals were right-handed. It’s thought that handedness is related to the evolution of language, another piece of evidence suggesting that Neanderthals likely possessed a form of language.
+"),
+Experiment_2 = c("Archaeology is the science that studies human history and prehistory based on the analysis of objects from the past such as human bones, engravings, constructions, and various objects, from nails to bits of pots. This task requires a great deal of carefulness, because objects from the past need to often be dug out from the ground and patiently cleaned, without destroying them in the process.
+
+Archaeologists have been able to shed light on human history in all continents, from ancient Egypt to the Incas in Peru or the Khmers in Cambodia.
+
+Archaeologists study the paintings made by our ancestors, such as those that can be found in Lascaux, a set of caves found in the south of France that have been decorated by people at least 30000 years ago.
+
+Archaeologists have also found remains of our more distant ancestors, showing that our species is just one among several that appeared, and then either changed or went extinct, such as Neanderthals, Homo erectus, or Homo habilis.", 
+"Archaeologists, scientists who study human history and prehistory, are able to tell, from their bones, whether someone was male or female, how old they were, and whether they suffered from a range of diseases. Archaeologists can now tell at what age someone, dead for tens of thousands of years, stopped drinking their mother’s milk, from the composition of their teeth.
+Archaeologists learn about the language that our ancestors or cousins might have had. For instance, the nerve that is used to control breathing is larger in humans than in apes, plausibly because we need more fine-grained control of our breathing in order to speak. As a result, the canal containing that nerve is larger in humans than in apes – and it is also enlarged in Neanderthals.
+Archaeologists can also tell, from an analysis of the tools they made, that most Neanderthals were right-handed. It’s thought that handedness is related to the evolution of language, another piece of evidence suggesting that Neanderthals likely possessed a form of language."))
+
+# Use kable() to create the table and print it as Markdown
+kableExtra::kable(table, 
+                  col.names = c("", "Experiment 1 (old)", "Experiment 2 (new)"),
+                  caption = "Stimuli",
+                  align = "l", 
+                  booktabs = T,
+                  longtable = TRUE) %>%
+  kable_paper(full_width = FALSE) %>%
+  column_spec(1, width = "5em") %>%
+  column_spec(2, width = "20em") %>%
+  column_spec(3, width = "20em")
+```

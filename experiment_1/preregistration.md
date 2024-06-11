@@ -1,0 +1,256 @@
+---
+title: "Pre-registration Experiment 1"
+output:
+  bookdown::html_document2:
+      keep_md: yes
+  bookdown::word_document2: default
+  bookdown::pdf_document2: default
+always_allow_html: true
+---
+
+
+```r
+library(tidyverse)     # create plots with ggplot, manipulate data, etc.
+```
+
+```
+## Warning: package 'stringr' was built under R version 4.2.3
+```
+
+```r
+library(broom.mixed)   # convert regression models into nice tables
+library(modelsummary)  # combine multiple regression models into a single table
+```
+
+```
+## Warning in !is.null(rmarkdown::metadata$output) && rmarkdown::metadata$output
+## %in% : 'length(x) = 3 > 1' in coercion to 'logical(1)'
+```
+
+```r
+library(lme4)          # model specification / estimation 
+library(lmerTest)      # provides p-values in the output
+library(ggpubr)        # stile feature of ggplot
+library(gghalves)      # do special plots in ggplot
+library(kableExtra)    # for tables
+```
+
+
+
+# I. Introduction
+
+Why might people trust science without understanding it? There is a popular explanation as to why people do not trust science enough: the deficit model. According to the deficit model, people do not trust in science enough, because they do not know enough about it. Yet, survey data consistently shows that most people do trust science - although, indeed, they do not seem to know much about it. To explain this, we propose the lasting-impression account. According to the lasting-impression account, people are impressed by scientific findings, e.g. because of their difficulty, their precision, and their degree of consensus. They infer that scientists are competent and, everything else equal, trustworthy. We suspect that these impressions persist more than specific scientific knowledge, and are more relevant for explaining trust in science. 
+
+## II. Data collection
+
+We have run a pilot study corresponding to the design described here. This pilot served as a manipulation check--do participants perceive the impressive condition indeed to be more impressive?--and to inform our power simulations. 
+
+For the actual study, no data has been collected yet. 
+
+## III. Procedure
+
+After providing their consent to participate in the study, participants will pass an attention check:
+
+> *Imagine you are playing video games with a friend and at some point your friend says: "I don't want to play this game anymore! To make sure that you read the instructions, please write the three following words"I pay attention" in the box below. I really dislike this game, it's the most overrated game ever. Do you agree with your friend?*
+
+Participants will then read the following instructions:
+
+> *You’re going to read two texts about scientific discoveries, in two fields: archeology (the study of human activity through the recovery and analysis of material culture), and entomology (the study of insects). We ask you to read the texts, and then answer a few questions about them.*
+
+## IV. Design
+
+We will manipulate the impressiveness of the texts about the scientific disciplines, as shown in Table \@ref(tab:stimuli). Impressiveness varies within participants, but with different texts: each participant sees an `impressive` version for one discipline, and a `basic` version for the other discipline. The texts are matched for length. 
+
+<table class=" lightable-paper" style='font-family: "Arial Narrow", arial, helvetica, sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'>
+<caption>(\#tab:stimuli)Stimuli</caption>
+ <thead>
+  <tr>
+   <th style="text-align:left;">  </th>
+   <th style="text-align:left;"> Impressive </th>
+   <th style="text-align:left;"> Basic </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;width: 5em; "> Archeology </td>
+   <td style="text-align:left;width: 20em; "> Archeologists, scientists who study human history and prehistory, are able to tell, from their bones, whether someone was male or female, how old they were, and whether they suffered from a wide range of diseases. Archeologists can now even tell at what age someone, dead for tens of thousands of years, stopped drinking their mother’s milk, from the composition of their teeth. 
+
+Looking for patterns, archeologists can also understand how far our ancestors traveled, or how often they fought each other.
+
+Archeologists can learn about the language that our ancestors or cousins might have had. For instance, the nerve that is used to control breathing is larger in humans than in apes, plausibly because we need more fine-grained control of our breathing in order to speak. As a result, the canal containing that nerve is larger in humans than in apes – and it is also enlarged in Neanderthals. 
+
+We can also tell, from an analysis of the tools they made, that, like modern humans, most Neanderthals were right-handed. It’s thought that handedness is related to the evolution of language, another piece of evidence suggesting that Neanderthals likely possessed a form of language. </td>
+   <td style="text-align:left;width: 20em; "> Archaeology is the science that studies human history and prehistory based on the analysis of objects from the past such as human bones, engravings, constructions, and various objects, from nails to bits of pots. This task requires a great deal of carefulness, because objects from the past need to often be dug out from the ground and cleaned, without destroying them in the process. 
+
+Archeologists have been able to shed light on human history in all continents, from ancient Egypt to the Incas in Peru or the Khmers in Cambodia. 
+
+Archaeologists have made some startling discoveries, such as the amazing animal paintings in the Lascaux caves, which have been shown to be at least 30000 years old. On that basis, archeologists speculate on the artistic and religious lives of our ancestors. 
+
+Archeologists have also been able to find remains of our more distant ancestors, showing that our species is just one among several that appeared and then went extinct, such as Neanderthals, Homo erectus, or Homo habilis. 
+
+Archaeology relies on scientific methods of analysis such as carbon dating, which enables us to date objects, based on the type of carbon atoms they contain. </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;width: 5em; "> Entomology </td>
+   <td style="text-align:left;width: 20em; "> Entomologists are the scientists who study insects. Some of them have specialized in understanding how insects perceive the world around them, and they have uncovered remarkable abilities. 
+
+Entomologists interested in how flies’ visual perception works have used special displays to present images for much less than the blink of an eye, electrodes to record how individual cells in the flies’ brain react, and ultra-precise electron microscopy to examine their eyes. Thanks to these techniques, they have shown that some flies can perceive images that are displayed for just three milliseconds (a thousandth of a second) – about ten times shorter than a single movie frame (of which there are 24 per second). 
+
+Entomologists who study the hair of crickets have shown that these microscopic hairs, which can be found on antenna-like organs attached to the crickets’ rear, are maybe the most sensitive organs in the animal kingdom. The researchers used extremely precise techniques to measure how the hair reacts to stimuli, such as laser-Doppler velocimetry, a technique capable of detecting the most minute of movements. They were able to show that the hair could react to changes in the motion of the air that had less energy than one particle of light, a single photon. </td>
+   <td style="text-align:left;width: 20em; "> Entomologists are scientists who investigate insects, typically having a background in biology. They study, for example, how a swarm of bees organizes, or how ants communicate with each other. 
+
+They also study how different insects interact with each other and their environment, whether some species are in danger of going extinct, or whether others are invasive species that need to be controlled.
+
+Sometimes entomologists study insects by observing them in the wild, sometimes they conduct controlled experiments in laboratories, to see for example how different environmental factors change the behavior of insects, or to track exactly the same insects over a longer period of time.
+
+An entomologist often specializes in one type of insect in order to study it in depth. For example, an entomologist who specializes in ants is called a myrmecologist. </td>
+  </tr>
+</tbody>
+</table>
+
+# V. Outcomes
+
+We assess the following outcomes: 
+
+- Learning: "How much do you feel you’ve learnt about human history by reading this text?" [1 - Nothing, 2 - A bit, 3 - Some, 4 - Quite a bit, 5 - A lot]
+
+- Impressed: “How impressive do you think the findings of the archeologists described in the text are?” [1 - Not very impressive, 2 - A bit impressive, 3 - Quite impressive, 4 - Very impressive, 5 - Extremely impressive]
+
+- Competence: "Would you agree that reading this text has made you think of archeologists as more competent than you thought before?" [1 - Strongly disagree, 2 - Disagree, 3 - Neither agree nor disagree, 4 - Agree, 5 - Strongly agree]
+
+- Trust: "Having read this text, would you agree that you trust the discipline of archeology more than you did before?" [1 - Strongly disagree, 2 - Disagree, 3 - Neither agree nor disagree, 4 - Agree, 5 - Strongly agree]
+
+- Consensus: "To which extent do you think the findings from the short text you just read reflect a minority or a majority opinion among archeologists?" [1 - Small minority, 2 - Minority, 3 - About half, 4 - Majority, 5 - Large majority]
+
+# VI. Manipulation check, hypotheses, research questions
+
+For all statistical tests, we will rely on mixed models, with a random intercept for participants, in order to account for the dependency of observations due to the within-participant design.
+
+We have one manipulation check: 
+
+M1: Participants perceive the texts in the impressive condition as more impressive than the texts in the basic condition.
+
+Our hypotheses are:
+
+## H1a: Participants will perceive scientists as more competent than they did before after having read an impressive text about their discipline's findings, compared to when reading a basic text. 
+
+
+```r
+model_competence <- lmer(competence ~ impressiveness + (1 | id), data)
+```
+
+## H1b: Across all conditions, participants who are more impressed by the text about a discipline will also tend to perceive the scientists of the discipline as more competent.
+
+
+```r
+model_competence_pooled <- lmer(competence ~ impressed + (1 | id), data)
+```
+
+## H2a: Participants will trust a discipline more than they did before after reading an impressive text about the discipline's findings, compared to when reading a basic text.
+
+
+```r
+model_trust <- lmer(trust ~ impressiveness + (1 | id), data)
+```
+
+## H2b: Across all conditions, participants who are more impressed by the text about a discipline will also tend to trust the scientists of the discipline more.
+
+
+```r
+model_trust_pooled <- lmer(trust ~ impressed + (1 | id), data)
+```
+
+We have the following research questions:
+
+RQ1: Do participants perceive to learn more from the texts in the impressive condition, compared to the basic condition?
+
+
+```r
+model_learn <- lmer(learn ~ impressiveness + (1 | id), data)
+```
+
+RQ2: Do perceptions of consensus interact with the relationships proposed in the hypotheses, such that greater perceived consensus is a associated with a more postive relationship between impressiveness and trust/competence ?
+
+
+```r
+# H1
+model_consensus_trust <- lmer(trust ~ impressiveness*consensus + (1 | id), data)
+model_consensus_trust_pooled <- lmer(trust ~ impressed*consensus + (1 | id), data)
+# H2
+model_consensus_competence <- lmer(competence ~ impressiveness*consensus + (1 | id), data)
+model_consensus_competencepooled <- lmer(competence~ impressed*consensus + (1 | id), data)
+```
+
+# Exclusions
+
+We will exclude participants failing the attention check, i.e. participants not answering the question or writing anything that does resemble “I pay attention”.
+
+# Power analysis
+
+We ran a simulations to inform our choice of sample size. All assumptions and details on the procedure can be found in the `power_exp1.Rmd` document. Our assumptions on effect sizes were based on pilot data. We find that the minimum required sample size to detect a statistically significant effect with a power of 0.9 is n = 100 participants. We will therefor recruit 100 participants.
+
+
+```r
+# read power data
+power <- read_csv("data/power_all_outcomes.csv")
+```
+
+```
+## Rows: 28 Columns: 5
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: ","
+## chr (2): term, outcome_variable
+## dbl (3): power, n, iterations
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+```
+
+```r
+# plot results
+ggplot(power, 
+       aes(x = n, y = power, color = term)) +
+  geom_line(size = 1.5) + 
+  geom_point() +
+  # add a horizontal line at 90%, our power_threshold
+  geom_hline(aes(yintercept = .9), linetype = 'dashed') + 
+  # Prettify!
+  theme_minimal() + 
+    scale_colour_viridis_d(option = "plasma") + 
+  scale_y_continuous(limits = c(0, 1), labels = scales::percent) + 
+  labs(x = 'Sample Size', y = 'Power',
+       caption = paste("iterations per \nsample size =", max(power$iterations))) +
+  guides(color = FALSE) +
+  facet_wrap(~outcome_variable)
+```
+
+```
+## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+## ℹ Please use `linewidth` instead.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+## generated.
+```
+
+```
+## Warning: The `<scale>` argument of `guides()` cannot be `FALSE`. Use "none" instead as
+## of ggplot2 3.3.4.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+## generated.
+```
+
+![](preregistration_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
+
+
+
+
+
+
+
+
+
+
+
+
+

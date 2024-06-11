@@ -1,0 +1,84 @@
+---
+title: "Pre-registration Experiment 2"
+output:
+  bookdown::pdf_document2:
+    toc: false
+  bookdown::word_document2: default
+  bookdown::html_document2:
+    keep_md: yes
+    toc: false  # Remove table of contents from HTML output
+always_allow_html: true
+---
+
+```{r packages, message=FALSE, echo=FALSE, include=FALSE}
+library(tidyverse)     # create plots with ggplot, manipulate data, etc.
+library(broom.mixed)   # convert regression models into nice tables
+library(modelsummary)  # combine multiple regression models into a single table
+library(lme4)          # model specification / estimation 
+library(lmerTest)      # provides p-values in the output
+library(ggpubr)        # stile feature of ggplot
+library(gghalves)      # do special plots in ggplot
+library(kableExtra)    # for tables
+```
+
+Experiment 2 is essentially intended to be a slightly improved replication of experiment 1.
+
+Although we confirmed all our hypotheses, there were a couple of issues with experiment 1 that make us feel that a replication is warranted:
+
+- We made a technical mistake: For both the impressive and basic entomology stimuli, our manipulation check question read: “How impressive do you think the findings of the archeologists described in the text are?”, whereas it should have read “… the findings of entomologists…”. Two participants brought this issue to our attention. While it should not have affected Hypotheses 1a and 2a, it might have distorted results on Hypotheses 1b and 2b which rely on the faulty question item. We will correct this mistake for study 2. 
+
+- One participant remarked that we should have spelled “archaeology” instead of “archeology”. To avoid potential confusion, we will change the spelling accordingly for study 2.
+
+- Regarding our archeology vignettes–contrary to the findings in our pilot study–participants did not rate the impressive version more impressive than the basic version. We will therefore use slightly modified vignettes for archeology for study 2, hoping to make the two conditions more distinguishable. We also shortened the text in both conditions to be more similar in length to (i) each other and (ii) to the entomology vignettes. Table \@ref(tab:stimuli) shows the old version from study 1 and the new version for study 2. 
+
+We will also run the study on UK participants, using the opportunity of replicating the main results on a different population sample.
+
+Other than that the design of study 2 will be identical to the design of study 1. We will proceed just as detailed in the preregistration for study 1. As for study 1, we will recruit 100 participants.
+
+\newpage
+
+```{r stimuli, echo=FALSE}
+# Create a matrix of image file paths as Markdown-formatted strings
+table <- data.frame(impressiveness = c("basic", 
+                                       "impressive"),
+                    Experiment_1 = c("Archaeology is the science that studies human history and prehistory based on the analysis of objects from the past such as human bones, engravings, constructions, and various objects, from nails to bits of pots. This task requires a great deal of carefulness, because objects from the past need to often be dug out from the ground and cleaned, without destroying them in the process. 
+
+Archeologists have been able to shed light on human history in all continents, from ancient Egypt to the Incas in Peru or the Khmers in Cambodia. 
+
+Archaeologists have made some startling discoveries, such as the amazing animal paintings in the Lascaux caves, which have been shown to be at least 30000 years old. On that basis, archeologists speculate on the artistic and religious lives of our ancestors. 
+
+Archeologists have also been able to find remains of our more distant ancestors, showing that our species is just one among several that appeared and then went extinct, such as Neanderthals, Homo erectus, or Homo habilis. 
+
+Archaeology relies on scientific methods of analysis such as carbon dating, which enables us to date objects, based on the type of carbon atoms they contain.", 
+"Archeologists, scientists who study human history and prehistory, are able to tell, from their bones, whether someone was male or female, how old they were, and whether they suffered from a wide range of diseases. Archeologists can now even tell at what age someone, dead for tens of thousands of years, stopped drinking their mother’s milk, from the composition of their teeth. 
+
+Looking for patterns, archeologists can also understand how far our ancestors traveled, or how often they fought each other.
+
+Archeologists can learn about the language that our ancestors or cousins might have had. For instance, the nerve that is used to control breathing is larger in humans than in apes, plausibly because we need more fine-grained control of our breathing in order to speak. As a result, the canal containing that nerve is larger in humans than in apes – and it is also enlarged in Neanderthals. 
+
+We can also tell, from an analysis of the tools they made, that, like modern humans, most Neanderthals were right-handed. It’s thought that handedness is related to the evolution of language, another piece of evidence suggesting that Neanderthals likely possessed a form of language.
+"),
+Experiment_2 = c("Archaeology is the science that studies human history and prehistory based on the analysis of objects from the past such as human bones, engravings, constructions, and various objects, from nails to bits of pots. This task requires a great deal of carefulness, because objects from the past need to often be dug out from the ground and patiently cleaned, without destroying them in the process.
+
+Archaeologists have been able to shed light on human history in all continents, from ancient Egypt to the Incas in Peru or the Khmers in Cambodia.
+
+Archaeologists study the paintings made by our ancestors, such as those that can be found in Lascaux, a set of caves found in the south of France that have been decorated by people at least 30000 years ago.
+
+Archaeologists have also found remains of our more distant ancestors, showing that our species is just one among several that appeared, and then either changed or went extinct, such as Neanderthals, Homo erectus, or Homo habilis.", 
+"Archaeologists, scientists who study human history and prehistory, are able to tell, from their bones, whether someone was male or female, how old they were, and whether they suffered from a range of diseases. Archaeologists can now tell at what age someone, dead for tens of thousands of years, stopped drinking their mother’s milk, from the composition of their teeth.
+Archaeologists learn about the language that our ancestors or cousins might have had. For instance, the nerve that is used to control breathing is larger in humans than in apes, plausibly because we need more fine-grained control of our breathing in order to speak. As a result, the canal containing that nerve is larger in humans than in apes – and it is also enlarged in Neanderthals.
+Archaeologists can also tell, from an analysis of the tools they made, that most Neanderthals were right-handed. It’s thought that handedness is related to the evolution of language, another piece of evidence suggesting that Neanderthals likely possessed a form of language."))
+
+# Use kable() to create the table and print it as Markdown
+kableExtra::kable(table, 
+                  col.names = c("", "Experiment 1 (old)", "Experiment 2 (new)"),
+                  caption = "Stimuli",
+                  align = "l", 
+                  booktabs = T,
+                  longtable = TRUE) %>%
+  kable_paper(full_width = FALSE) %>%
+  column_spec(1, width = "5em") %>%
+  column_spec(2, width = "20em") %>%
+  column_spec(3, width = "20em")
+```
+

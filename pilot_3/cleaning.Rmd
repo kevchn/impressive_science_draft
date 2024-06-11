@@ -1,0 +1,89 @@
+---
+title: "Data cleaning Pilot 3"
+output: 
+  html_document: 
+    keep_md: yes
+---
+
+```{r packages, message=FALSE}
+library(tidyverse)     # create plots with ggplot, manipulate data, etc.
+library(broom.mixed)   # convert regression models into nice tables
+library(modelsummary)  # combine multiple regression models into a single table
+library(lme4)          # model specification / estimation 
+library(lmerTest)      # provides p-values in the output
+library(ggpubr)        # stile feature of ggplot
+library(gghalves)      # do special plots in ggplot
+library(kableExtra)    # for tables
+```
+
+## Import data
+```{r import, message=FALSE}
+d <- read_csv("./data/qualtrics.csv")
+names(d)
+```
+
+```{r}
+# inspect
+head(d) # you can also use View(d)
+# delete first two rows
+d <- d %>% 
+  slice(3: nrow(.)) 
+```
+
+## Attention check
+```{r attention}
+# attention check
+# to see different answers given (i.e.levels), transform into factor
+d$attention <- as.factor(d$attention)
+# check levels to see different answer types
+levels(d$attention) 
+
+# We filter out two participants 
+table(d$attention)
+```
+
+There is no failed attention check that we remove. 
+
+```{r}
+# filter to only valid attention check responses
+d <- d %>% filter(str_detect(attention, "attention"))
+```
+
+## Re-shape data
+
+```{r}
+# check all names and their order
+names(d)
+```
+
+
+```{r}
+# clean and re-shape
+d <- d %>% 
+  # add an easy to read participant identifier
+  mutate(id = 1:nrow(.)) %>% 
+  # bring to long format
+  pivot_longer(cols = c(starts_with("archeo"), starts_with("entom")), 
+               names_to = "condition", values_to = "score") %>% 
+  # Re-code values for condition variable:
+  # Remove everything after the three dots and the three dots themselves
+  mutate(condition = str_replace(condition, "\\.{3}.*", "")) %>% 
+  # separate conditions into CONVERGENCE_OUTCOME_STIMULUS
+  separate_wider_delim(condition, "_", names = c("discipline", "impressiveness", 
+                                                 "outcome")
+                       ) %>%
+  drop_na(score) %>% 
+  pivot_wider(names_from = outcome, values_from = score) %>% 
+  # create better variable names
+  rename(competence = comp, 
+         impressed = impress) %>% 
+  # all variables are coded as `character` - make key variables numeric
+  mutate(across(c(learn, competence, impressed, trust), as.numeric)
+         )
+```
+
+## Export data
+
+```{r}
+write_csv(d, "data/cleaned.csv")
+```

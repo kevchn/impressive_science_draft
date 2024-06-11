@@ -1,0 +1,148 @@
+---
+title: "Pre-registration Experiment 1"
+output:
+  bookdown::pdf_document2: default
+  bookdown::word_document2: default
+  bookdown::html_document2:
+      keep_md: yes
+always_allow_html: true
+---
+
+```{r packages, message=FALSE, echo=FALSE, include=FALSE}
+library(tidyverse)     # create plots with ggplot, manipulate data, etc.
+library(broom.mixed)   # convert regression models into nice tables
+library(modelsummary)  # combine multiple regression models into a single table
+library(lme4)          # model specification / estimation 
+library(lmerTest)      # provides p-values in the output
+library(ggpubr)        # stile feature of ggplot
+library(gghalves)      # do special plots in ggplot
+library(kableExtra)    # for tables
+library("grid")        # for image plots   
+library("gridExtra")   # for image plots
+library("png")         # for image plots
+library(stargazer)
+```
+
+```{r, include=FALSE, message=FALSE}
+data <- read_csv("data/cleaned.csv")
+```
+
+# Descriptives
+
+```{r, echo=FALSE, message=FALSE, fig.show='hold'}
+# by discipline
+data %>% 
+  group_by(discipline, impressiveness) %>% 
+  summarise(across(c(impressed, learn, competence, trust, consensus), 
+                   list(mean = ~mean(., na.rm=TRUE)), 
+                   .names = "{col}_{fn}")) %>%
+  mutate_if(is.numeric, ~round(.x, digits = 2)) %>% 
+  kable(format = "latex", booktabs = TRUE, caption = "Descriptives") %>%
+  kable_styling(latex_options = c("striped", "hold_position"), full_width = FALSE)
+```
+
+# Manipulation check, hypotheses, research questions
+
+We have one manipulation check: 
+
+M1: Participants perceive the texts in the impressive condition as more impressive than the texts in the basic condition.
+
+```{r, echo=FALSE}
+model_impressed <- lmer(impressed ~ impressiveness + (1 | id), data) 
+
+modelsummary(list("Manipulation check" = model_impressed), 
+             stars = TRUE)
+```
+
+
+Our hypotheses are:
+
+- H1a: Participants will perceive scientists as more competent than they did before after having read an impressive text about their discipline's findings, compared to when reading a basic text. 
+
+- H1b: Across all conditions, participants who are more impressed by the text about a discipline will also tend to perceive the scientists of the discipline as more competent.
+
+- H2a: Participants will trust a discipline more than they did before after reading an impressive text about the discipline's findings, compared to when reading a basic text.
+
+- H2b: Across all conditions, participants who are more impressed by the text about a discipline will also tend to trust the scientists of the discipline more.
+
+```{r, echo=FALSE}
+model_competence_pooled <- lmer(competence ~ impressed + (1 | id), data)
+model_competence <- lmer(competence ~ impressiveness + (1 | id), data)
+model_trust <- lmer(trust ~ impressiveness + (1 | id), data)
+model_trust_pooled <- lmer(trust ~ impressed + (1 | id), data)
+
+modelsummary(list(
+                  "H1a (Competence)" = model_competence,
+                  "H1b (Competence pooled)" = model_competence_pooled,
+                  "H2a (Trust)" = model_trust,
+                  "H2b (Trust pooled)" = model_trust_pooled
+                  ), 
+             stars = TRUE)
+```
+
+Research questions:
+
+- RQ1: Do participants perceive to learn more from the texts in the impressive condition, compared to the basic condition?
+
+- RQ2: Do perceptions of consensus interact with the relationships proposed in the hypotheses, such that greater perceived consensus is a associated with a more postive relationship between impressiveness and trust/competence ?
+
+```{r, echo=FALSE}
+# RQ 1
+model_learn <- lmer(learn ~ impressiveness + (1 | id), data)
+
+# H1
+model_consensus_trust <- lmer(trust ~ impressiveness*consensus + (1 | id), data)
+model_consensus_trust_pooled <- lmer(trust ~ impressed*consensus + (1 | id), data)
+# H2
+model_consensus_competence <- lmer(competence ~ impressiveness*consensus + (1 | id), data)
+model_consensus_competence_pooled <- lmer(competence~ impressed*consensus + (1 | id), data)
+
+modelsummary(list("RQ 1" = model_learn,
+                  "H1a x Consensus" = model_consensus_trust,
+                  "H1b x Consensus" = model_consensus_trust_pooled,
+                  "H2a x Consensus" = model_consensus_competence,
+                  "H2b x Consensus" = model_consensus_competence_pooled
+), 
+stars = TRUE)
+```
+
+
+# Plots
+
+```{r}
+ggplot(data, aes(x = impressiveness, y = competence, fill = impressiveness)) +
+  geom_half_violin (position = position_nudge(x = -.05), 
+                    adjust=1, alpha = .4,
+                    side = "l") +
+  geom_half_boxplot(position = position_nudge(x = .05), 
+                    alpha = .4, side = "r" ) +
+  scale_fill_viridis_d(option = "plasma", begin = 0.5, end = 0.7) +
+  facet_wrap(~discipline)
+```
+
+```{r}
+ggplot(data, aes(x = impressiveness, y = trust, fill = impressiveness)) +
+  geom_half_violin (position = position_nudge(x = -.05), 
+                    adjust=1, alpha = .4,
+                    side = "l") +
+  geom_half_boxplot(position = position_nudge(x = .05), 
+                    alpha = .4, side = "r" ) +
+  scale_fill_viridis_d(option = "plasma", begin = 0.5, end = 0.7) +
+  facet_wrap(~discipline)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
